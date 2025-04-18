@@ -3,7 +3,11 @@ import json
 import sys
 from datetime import datetime, timezone
 
-
+# fixme:
+#  add general exception handling
+#  add suggestion for input
+#  format output for listing
+#  add help - DONE
 class ActionNotSupported(Exception):
     """Raised when the input value is not in ['add', 'update', 'delete']"""
     pass
@@ -166,11 +170,37 @@ def update_status(task_id, command):
         print("No such id. List tasks to see what's available.")
 
 
+def print_help():
+    help_text = """
+    Usage: ./task_cli.py <command> [options]
+
+    A simple task tracker CLI.
+
+    Commands:
+      add <description>           Add a new task. Requires a description.
+      list [status]               List all pending tasks.
+      update <id> <description>   Updates task description. Requires the task ID.
+      delete <id>                 Delete task from the list. Requires the task ID.
+      mark-in-progress <id>       Set task status to "in-progress".
+      mark-done <id>              Set task status to "done".
+      help                        Show this help message.
+
+    Examples:
+      ./task_cli.py add "Buy milk"
+      ./task_cli.py list
+      ./task_cli.py mark-done 1
+      ./task_cli.py update 2 "Fix the dinner"
+      ./task_cli.py help
+    """
+    print(help_text)
+
+
 def main():
     try:
         command = sys.argv[1] if len(sys.argv) > 1 else None
+        print(sys.argv)
 
-        if command.lower() not in ['add', 'update', 'list', 'delete', 'mark-in-progress', 'mark-done']:
+        if command.lower() not in ['add', 'update', 'list', 'delete', 'mark-in-progress', 'mark-done', 'help']:
             raise ActionNotSupported
 
         if command.lower() == "add":
@@ -202,6 +232,8 @@ def main():
         elif command.lower() in ["mark-in-progress", "mark-done"]:
             task_id = int(sys.argv[2])
             update_status(task_id, command)
+        elif command.lower() == "help":
+            print_help()
 
     except AddCommandNotCorrect:
         print("Error: Please provide a task description.")
@@ -211,6 +243,8 @@ def main():
         print("Please choose the action.")
     except StatusUnknown:
         print('Choose status from: "todo", "in-progress", "done".')
+    except Exception:
+        print("Something went wrong. Please check your input.")
 
 
 if __name__ == '__main__':
