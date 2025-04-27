@@ -3,11 +3,7 @@ import json
 import sys
 from datetime import datetime, timezone
 
-# fixme:
-#  add general exception handling
-#  add suggestion for input
-#  format output for listing
-#  add help - DONE
+
 class ActionNotSupported(Exception):
     """Raised when the input value is not in ['add', 'update', 'delete']"""
     pass
